@@ -1,3 +1,5 @@
+# 2.3 - Prática de Herança Simples
+
 class Veiculo:
     def __init__(self, cor, placa, numero_rodas) -> None:
         self.cor = cor
