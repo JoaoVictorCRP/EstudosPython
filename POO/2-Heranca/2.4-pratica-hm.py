@@ -15,14 +15,14 @@ class Animal:
 # Classes Mães
 class Ave(Animal):
     def __init__(self, cor_bico, **kw):
-        super().__init__(nro_patas=kw["nro_patas"])
+        super().__init__(**kw)
         self.cor_bico = cor_bico
 
 
 class Mamifero(Animal):
     def __init__(self, cor_pelo, **kw): # Utiliza-se Kwargs para que o interpretador não confunda o número de parametros das classes.
-        super().__init__(nro_patas=kw["nro_patas"])
         self.cor_pelo = cor_pelo
+        super().__init__(**kw)
 
 
 # Classes Filhas
@@ -43,8 +43,8 @@ class Ornitorrinco(Mamifero, Ave):
 
 
 #                                                   Instâncias
-gato_felix = Gato(4,'Preto')
+gato_felix = Gato(cor_pelo='Preto', nro_patas=4) # Lembrando: Quando incluimos kwargs devemos nomear todos os parametros.
 print(gato_felix, '\n')
 
-agente_perry = Ornitorrinco(4, 'Verde', 'Laranja')
+agente_perry = Ornitorrinco(cor_pelo='Verde', cor_bico='Laranja', nro_patas=4,)
 print(agente_perry, '\n')
