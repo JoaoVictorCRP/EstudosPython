@@ -25,3 +25,16 @@ class Address(Base):
     user = relationship("User", back_populates="address", cascade="all, delete-orphan") # estabelece o relacionamento  
     def __repr__(self):
         return f'Address(id={self.id}, email={self.email_address})'
+    
+# Conexão com o banco de dados
+engine = sqlA.create_engine('sqlite://')
+
+# Criando as classes como tabelas no banco de dados
+Base.metadata.create_all(engine)
+
+# Investiga o esquema do banco de dados
+inspetor = sqlA.inspect(engine)
+
+# Obtendo nome das tabelas
+print(inspetor.get_table_names())
+print(inspetor.default_schema_name)
