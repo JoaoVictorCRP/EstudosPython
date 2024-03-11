@@ -1,6 +1,7 @@
 import sqlalchemy as sqlA
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Session
 from sqlalchemy import Column
 
 Base = declarative_base()
@@ -22,7 +23,7 @@ class Address(Base):
     id = Column(sqlA.Integer, primary_key=True, autoincrement=True)
     email_address = Column(sqlA.String(50), nullable=False) # (NOT NULL)
     user_id = Column(sqlA.Integer, sqlA.ForeignKey("user_account.id"), nullable=False)
-    user = relationship("User", back_populates="address", cascade="all, delete-orphan") # estabelece o relacionamento  
+    user = relationship("User", back_populates="address") # estabelece o relacionamento  
     def __repr__(self):
         return f'Address(id={self.id}, email={self.email_address})'
     
@@ -38,3 +39,28 @@ inspetor = sqlA.inspect(engine)
 # Obtendo nome das tabelas
 print(inspetor.get_table_names())
 print(inspetor.default_schema_name)
+
+# Estabelecer uma sessão (para que os dados persistam)
+with Session(engine) as session:
+    joao = User(
+        name='joao victor',
+        fullname='Joao Victor Carrijo',
+        address=[Address(email_address='joaovictor@gmail.com')]
+    )
+
+    # Inserção de usuário com dois emails
+    larissa = User(
+        name='larissa',
+        fullname='Larissa Carrijo',
+        address=[Address(email_address='larissa@gmail.com'),
+                 Address(email_address='larissa@outlook.com')]      
+    )
+
+    # Inserção de usuário sem email
+    pedro = User(name='pedro',fullname='Pedro Alves')      
+
+    # Enviar para o BD.
+    session.add_all([joao, larissa, pedro])
+
+    # Commitando os dados no banco.
+    session.commit()
