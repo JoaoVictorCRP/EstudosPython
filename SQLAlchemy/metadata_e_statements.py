@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy import text
 from sqlalchemy import ForeignKey
 from sqlalchemy import MetaData
 from sqlalchemy import Table
@@ -11,7 +12,7 @@ from sqlalchemy import String
 
 engine = create_engine('sqlite:///:memory')
 
-metadata_obj = MetaData(schema='teste')
+metadata_obj = MetaData()
 user = Table(
     'user',
     metadata_obj,
@@ -36,20 +37,25 @@ print(user_prefs.primary_key, ';')
 print(user_prefs.foreign_keys)
 
 
-# Recuperando as tabelas criadas
+# Recuperando as tabelas
 print('\n--- Visualizando tabelas criadas ---')
 for table in metadata_obj.sorted_tables:
     print(table)
 
-# Exemplo com outra tabela
-metadata_db_obj = MetaData(schema='bank')
-financial_info = Table(
-    'financial_info',
-    metadata_db_obj,
-    Column('id', Integer, primary_key=True),
-    Column('value', String(100), nullable=False)
-)
+# Criando as tabelas
+metadata_obj.create_all(engine)
 
-# Informações da tabela financial_info
-print('\n--- Informações da tabela financial_info ---')
-print(financial_info.primary_key)
+# Estabelecendo conexão
+conn = engine.connect()
+
+# Executando comandos SQL na tabela USER:
+print('\n--- Executando SQL statements ---')
+sql_select = text('SELECT * FROM USER')
+sql_insert = text("INSERT INTO user VALUES(1, 'Joao Victor', 'joaovictor@gmail.com', 'jao')")
+conn.execute(sql_insert)
+result = conn.execute(sql_select)
+for row in result:
+    print(row)
+
+# Encerrando conexão
+conn.close()
