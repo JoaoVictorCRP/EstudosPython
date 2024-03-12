@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
 from sqlalchemy import Column
+from sqlalchemy import func
 
 Base = declarative_base()
 # As classes que se tornarão entidades devem herdar de declarative_base. 
@@ -39,7 +40,6 @@ inspetor = sqlA.inspect(engine)
 # Obtendo nome das tabelas
 print(f'Nome das tabelas: {inspetor.get_table_names()}')
 print(f'Nome do esquema: {inspetor.default_schema_name}')
-print()
 
 # Estabelecer uma sessão (para que os dados persistam)
 with Session(engine) as session:
@@ -68,15 +68,40 @@ with Session(engine) as session:
 
 # Realizando consulta na entidade usuário
 stmt = sqlA.select(User).where(User.name.in_(['joao victor', 'larissa']))
-print('--- Recuperando usuários a partir de condição de filtragem ---')
+print('\n--- Recuperando usuários a partir de condição de filtragem ---')
 for user in session.scalars(stmt):
     print(user)
 
-# Quebra de linha
-print()
-
 # Realizando consulta na entidade endereço
 stmt_address = sqlA.select(Address).where(Address.user_id.in_([2])) # usuário de id 2
-print("--- Recuperando os endereços de email de Larissa ---")
+print("\n--- Recuperando os endereços de email de Larissa ---")
 for address in session.scalars(stmt_address):
     print(address)
+
+# ORDER BY
+print('\n--- Recuperando de maneira ordenada ---')
+order_stmt = sqlA.select(User).order_by(User.fullname)
+for result in session.scalars(order_stmt):
+    print(result)
+
+# JOIN
+print('\n--- Juntando Dados das entidades ---')
+join_stmt = sqlA.select(User.fullname, Address.email_address).join_from(Address, User) # A cláusula de junção é detectada automaticamente de acordo com a FK.
+# print(join_stmt) # Query realizada
+for result in session.scalars(join_stmt):
+    print(result)
+
+
+# Estabelecendo uma coneção com o banco de dados. (Ao invés de uma sessão)
+connection = engine.connect()
+results = connection.execute(join_stmt).fetchall()
+print('\n--- Executando o JOIN a partir de uma conexão ---')
+for result in results:
+    print(result) # Diferentemente do retorno do statement de sessão, este retornará tanto o fullname quanto o endereço de email.
+
+
+# COUNT
+print('\n--- Total de instâncias em User ---')
+stmt_count = sqlA.select(func.count('*')).select_from(User)
+for result in session.scalars(stmt_count):
+    print(result)
