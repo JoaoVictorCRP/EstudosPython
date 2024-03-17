@@ -1,7 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy as sqla
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import String, Integer, Date, Column, Boolean
+from sqlalchemy import Unicode, Integer, DateTime, Column, Boolean
+import datetime
+import secrets
 
 # --- Definindo Objetos em Flask ---
 # No desenvolvimento de aplicativos, um "model" refere-se a representação real (ou conceitual) de algum objeto.
@@ -34,8 +36,33 @@ db.init_app(app)
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True) # Valor de identificação única
-    name = db.Column(db.String(100), nullable=False) # O nome ou o título da task settada pelo usuário
-    note = db.Column(db.String(100)) # Descrição ou comentários adicionais
-    creation_date = db.Column(db.Date()) # Data e o horário que a task foi criada
-    due_date = db.Column(db.Date()) # Data e o horário que a task deve ser concluída, se houver.
-    completed = db.Column(db.Boolean()) # Indica se a task foi concluída ou não
+    name = db.Column(db.Unicode, nullable=False) # O nome ou o título da task settada pelo usuário
+    note = db.Column(db.Unicode) # Descrição ou comentários adicionais
+    creation_date = db.Column(db.DateTime, nullable=False) # Data e o horário que a task foi criada
+    due_date = db.Column(db.DateTime) # Data e o horário que a task deve ser concluída, se houver.
+    completed = db.Column(db.Boolean(), default=False) # Indica se a task foi concluída ou não
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.creation_date = datetime.now()
+
+
+# --- Relacionamento dos Models ---
+# Em certos aplicativos web, você talvez queira expressar relacionamentos entre objetos. No exemplo do To-Do List,
+# usuários são donos de várias tasks, e cada tarefa pertence somente a um usuário (Relação N:1).
+    
+# No Flask, um relacionamento muitos-para-um pode ser especificado usando a função db.relationship. Primeiro,
+# vamos construir o User.
+    
+    class User(db.Model):
+        id = db.column(db.Integer, primary_key=True)
+        username = db.Column(db.Unicode, nullable=False)
+        email = db.Column(db.Unicode, nullable=False)
+        password = db.Column(db.Unicode, nullable=False)
+        date_joined = db.Column(db.Datetime, nullable=False)
+        token = db.Column(db.Unicode)
+
+        def __init__(self, *args, **kwargs) -> None:
+            super().__init__(*args, **kwargs)
+            self.date_joined = datetime.now()
+            self.token = secrets.token_urlsafe(64)
