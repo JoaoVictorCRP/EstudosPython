@@ -31,40 +31,57 @@ collection = db.pessoas
 # }
 
 # Submetendo as infos 
-# post_id = collection.insert_one(post).inserted_id
+# collection.insert_one(post).inserted_id
 
 # Fazendo uma query
 # pprint(collection.find_one())
 
 # Bulk inserts
-bulk_post = [{
-        "nome":"Anne",
-        "idade": 19,
-        "titulo":"Olá, sou a Anne!",
-        "descrição":"Analista de dados, Expert em PowerBI",
-        "tags":["dados","estatística","PowerBI","DBA"],
-        "date": datetime.now()
-    },
-    {
-        "nome":"Leonardo",
-        "sobrenome":"Dias dos Anjos",               # Veja que os documentos possuem atributos diferentes!
-        "idade":27,                                 # em um BD noSQL, nossos inserts simplesmente não possuem
-        "descrição":"Gestor de TI",                 # uma estrutura fixa.
-        "tags":["redes","infraestrutura","suporte","técnico"],
-        "date": datetime.now()
-    },
-    {
-        "nome":"João Pedro",
-        "idade": 16,
-        "titulo":"Aprendiz de Programação",
-        "descrição":"Aspirante a desenvolvedor, Futuro gênio",
-        "tags":["menor","básico","jovem","talento", "scratch", "portugol"],
-        "date": datetime.now()
-    },
-]
-bulk_insert = collection.insert_many(bulk_post)
+# bulk_post = [{
+#         "nome":"Anne",
+#         "idade": 19,
+#         "titulo":"Olá, sou a Anne!",
+#         "descrição":"Analista de dados, Expert em PowerBI",
+#         "tags":["dados","estatística","PowerBI","DBA"],
+#         "date": datetime.now()
+#     },
+#     {
+#         "nome":"Leonardo",
+#         "sobrenome":"Dias dos Anjos",               # Veja que os documentos possuem atributos diferentes!
+#         "idade":27,                                 # em um BD noSQL, nossos inserts simplesmente não possuem
+#         "descrição":"Gestor de TI",                 # uma estrutura fixa.
+#         "tags":["redes","infraestrutura","suporte","técnico"],
+#         "date": datetime.now()
+#     },
+#     {
+#         "nome":"João Pedro",
+#         "idade": 16,
+#         "titulo":"Aprendiz de Programação",
+#         "descrição":"Aspirante a desenvolvedor, Futuro gênio",
+#         "tags":["menor","básico","jovem","talento", "scratch", "portugol"],
+#         "date": datetime.now()
+#     },
+# ]
+# collection.insert_many(bulk_post)
 
-# Recuperação final
-cursor = collection.find({})
-for d in cursor:
-    pprint(d)
+# Recuperando vários documentos:
+# for document in collection.find():
+#     pprint(document)
+
+# Inserindo documento errado
+wrong_post = {
+    "nome":"Neguinho da Beija-Flor",
+    "idade": "?",
+    "titulo": "Olha o Beija-Flor aí, gente!",
+    "tags": ['carnaval','sapucaí','samba'],
+    "date": datetime(1976,2,10)
+}
+collection.insert_one(wrong_post)
+# Visualizando
+pprint(collection.find_one({"nome":"Neguinho da Beija-Flor"}))
+
+# Deletando UM documento indesejado
+# collection.delete_one({'nome':'Neguinho da Beija-Flor'})
+
+# Deletando VÁRIOS documentos indesejados (Supondo que inserimos diversas vezes o Neguinho da Beija-Flor)
+collection.delete_many({'nome':'Neguinho da Beija-Flor'}) 
