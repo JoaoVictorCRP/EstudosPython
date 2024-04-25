@@ -37,32 +37,32 @@ collection = db.pessoas
 # pprint(collection.find_one())
 
 # Bulk inserts
-bulk_post = [{
-        "nome":"Lindsey",
-        "idade": 21,
-        "titulo":"Oiee, sou a Lindsey",
-        "descrição":"Analista de dados, Expert em PowerBI",
-        "tags":["dados","estatística","PowerBI","DBA"],
-        "date": datetime.now()
-    },
-    {
-        "nome":"Leandro",
-        "sobrenome":"Malandro",               # Veja que os documentos possuem atributos diferentes!
-        "idade":55,                                 # em um BD noSQL, nossos inserts simplesmente não possuem
-        "descrição":"Gestor de TI",                 # uma estrutura fixa.
-        "tags":["redes","infraestrutura","suporte","técnico"],
-        "date": datetime.now()
-    },
-    {
-        "nome":"Enzo",
-        "idade": 14,
-        "titulo":"Aprendiz de Programação",
-        "descrição":"Aspirante a desenvolvedor, Futuro gênio",
-        "tags":["menor","básico","jovem","talento", "scratch", "portugol"],
-        "date": datetime.now()
-    },
-]
-collection.insert_many(bulk_post)
+# bulk_post = [{
+#         "nome":"Lindsey",
+#         "idade": 21,
+#         "titulo":"Oiee, sou a Lindsey",
+#         "descrição":"Analista de dados, Expert em PowerBI",
+#         "tags":["dados","estatística","PowerBI","DBA"],
+#         "date": datetime.now()
+#     },
+#     {
+#         "nome":"Leandro",
+#         "sobrenome":"Malandro",               # Veja que os documentos possuem atributos diferentes!
+#         "idade":55,                                 # em um BD noSQL, nossos inserts simplesmente não possuem
+#         "descrição":"Gestor de TI",                 # uma estrutura fixa.
+#         "tags":["redes","infraestrutura","suporte","técnico"],
+#         "date": datetime.now()
+#     },
+#     {
+#         "nome":"Enzo",
+#         "idade": 14,
+#         "titulo":"Aprendiz de Programação",
+#         "descrição":"Aspirante a desenvolvedor, Futuro gênio",
+#         "tags":["menor","básico","jovem","talento", "scratch", "portugol"],
+#         "date": datetime.now()
+#     },
+# ]
+# collection.insert_many(bulk_post)
 
 # Recuperando vários documentos:
 # for document in collection.find():
@@ -90,3 +90,7 @@ collection.insert_many(bulk_post)
 # Contando documentos
 cont_dados = collection.count_documents({'tags':'infraestrutura'})
 print(cont_dados)
+
+# Recuperando e ordenando por nome
+for document in collection.find().sort('nome'):
+    pprint(document)
