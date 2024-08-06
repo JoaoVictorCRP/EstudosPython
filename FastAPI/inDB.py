@@ -1,10 +1,8 @@
 from product import Product
+import json
 
 def generate_products():
-    list_products = []
-
-    for i in range(10):
-        p = Product(name=f'Produto {i+1}', price= 1.99*i)
-        list_products.append(p)
-
-    return list_products
+    file = open('./data/products.json')
+    data =  json.loads((file.read())) # load-s (load string) => https://stackoverflow.com/questions/39719689/what-is-the-difference-between-json-load-and-json-loads-functions
+    file.close()
+    return data

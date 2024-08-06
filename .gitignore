@@ -4,4 +4,5 @@ SQLAlchemy/Include
 SQLAlchemy/pyvenv.cfg
 *.env
 *.pyc
+*.cmd
 FastAPI/venv
